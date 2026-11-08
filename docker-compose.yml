@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: teamtasks
+      POSTGRES_PASSWORD: teamtasks
+      POSTGRES_DB: teamtasks
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # creates teamtasks_test for e2e tests on first start
+      - ./docker/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U teamtasks -d teamtasks']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://teamtasks:teamtasks@db:5432/teamtasks?schema=public
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-local-docker-access-secret-32-chars-min}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-local-docker-refresh-secret-32-chars-min}
+    ports:
+      - '3000:3000'
+
+volumes:
+  pgdata:

@@ -1,0 +1,18 @@
+# Render Blueprint: free Docker web service. Database: external PostgreSQL (e.g. Neon free tier).
+services:
+  - type: web
+    name: teamtasks-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false # paste the connection string in the Render dashboard
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
