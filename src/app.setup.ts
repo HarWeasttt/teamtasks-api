@@ -8,7 +8,7 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
  * exactly the same pipes/filters as production.
  */
 export function configureApp(app: INestApplication): void {
-  // behind a hosting proxy (Render): use X-Forwarded-For so rate limiting sees real client IPs
+  // behind a reverse proxy: use X-Forwarded-For so rate limiting sees real client IPs
   (app.getHttpAdapter().getInstance() as { set(key: string, value: unknown): void }).set(
     'trust proxy',
     1,

@@ -9,11 +9,6 @@
 REST API for a team task tracker: users create **workspaces**, invite teammates with **roles**,
 organise work into **projects** and **tasks**, and discuss tasks in **comments**.
 
-**Live demo:** _coming soon_ · **Swagger UI:** _coming soon_
-
-> Demo account: `demo@teamtasks.dev` / `DemoPassw0rd!`, or register your own.
-> The demo runs on a free instance that sleeps when idle, so the first request can take ~30-60 s.
-
 ## Features
 
 - **JWT authentication** with short-lived access tokens (15 min) and refresh tokens (7 days)
@@ -172,6 +167,7 @@ docker compose up --build
 
 The API runs on http://localhost:3000 and Swagger on http://localhost:3000/docs.
 Migrations and demo data are applied automatically on startup.
+Log in with the demo account `demo@teamtasks.dev` / `DemoPassw0rd!` or register your own.
 
 ### Option 2: Node locally, database in Docker
 
@@ -196,7 +192,7 @@ npm run lint
 The e2e tests start the full Nest application with the same pipes and filters as production
 (`src/app.setup.ts`) and run real HTTP requests against a separate `teamtasks_test` database.
 
-## CI/CD
+## CI
 
 GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs on every push and pull request:
 
@@ -207,8 +203,8 @@ GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs on 
 5. Production build
 6. Docker image build
 
-Deployment: [Render](https://render.com) builds the Docker image from `main` ([`render.yaml`](render.yaml)).
-The container runs `prisma migrate deploy` and the demo seed before it starts the server.
+The production Docker image is self-contained: on startup it runs `prisma migrate deploy` and an
+idempotent demo seed, then starts the server. It honours `X-Forwarded-For`, so it can run behind a reverse proxy.
 
 ## Environment variables
 
